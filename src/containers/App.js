@@ -10,7 +10,8 @@ class App extends React.Component{
 		super();
 		this.state = {
 			robots: [],
-			searchfield: ''
+			searchfield: '',
+			checkBox: ''
 		}
 	}
 
@@ -20,15 +21,28 @@ class App extends React.Component{
 		.then(users => this.setState({ robots: users }));
 	}
 
+	// Detect when user types or checks
 	onSearchChange = (event) =>{
 		this.setState({searchfield: event.target.value});
 	}
 
-	render(){
-		const {robots, searchfield} = this.state;
+	onBoxChecked = (event) => {
+		this.setState({checkBox: event.target.value});
+	}
 
+	render(){
+		const {robots, searchfield, checkBox} = this.state;
+
+		// Filter robots by checkbox and searchbox
 		const filteredRobots = robots.filter(robot => {
-			return robot.name.toLowerCase().includes(searchfield.toLowerCase());
+			if(checkBox == "email"){
+				return robot.email.toLowerCase().includes(searchfield.toLowerCase());
+			}else if (checkBox == "username") {
+				return robot.username.toLowerCase().includes(searchfield.toLowerCase());
+			}else{
+				return robot.name.toLowerCase().includes(searchfield.toLowerCase());
+			}
+			
 		});
 
 		return !robots.length ?
@@ -36,7 +50,7 @@ class App extends React.Component{
 			(
 			<div className="tc">
 				<h1 className="f2">Robofriends</h1>
-				<Searchbox searchChange={this.onSearchChange}/>
+				<Searchbox searchChange={this.onSearchChange} boxChecked={this.onBoxChecked}/>
 				<Scroll>
 					<CardList robots={filteredRobots} />
 				</Scroll>
